@@ -8,31 +8,36 @@ object NodeUtils {
 
       if (node.size != 0) {
 
-        var cur: Option[Node[T]] = Some(node)
-        var tmp: Option[Node[T]] = None
+        var cur: Node[T] = node
         var blockLeftBranch: Boolean = false
 
-        if (cur.isDefined) visitor(cur.get.value)
+        visitor(cur.value)
 
-        while (cur.isDefined) {
+        while (cur != null) {
 
-          if (cur.get.hasLeft & !blockLeftBranch) {
+          if (cur.hasLeft && !blockLeftBranch) {
+            cur = cur.left.get
+            visitor(cur.value)
 
-            cur = cur.get.left
-            if (cur.isDefined) visitor(cur.get.value)
-
-          } else if (cur.get.hasRight & cur.get.right != tmp) {
-
-            cur = cur.get.right
-            if (cur.isDefined) visitor(cur.get.value)
+          } else if (cur.hasRight) {
+            cur = cur.right.get
+            visitor(cur.value)
+            //  if turned to the right, we can again turn to the left
             blockLeftBranch = false
 
-          } else if (cur.get.parent.isDefined) {
-            tmp = cur
-            cur = cur.get.parent
+          } else {
+
+            //  if turned up a level, we can't turn to the left
             blockLeftBranch = true
 
-          } else cur = None
+            while (cur.hasParent && cur.parent.get.hasRight && cur.parent.get.right.get == cur) {
+              cur = cur.parent.get
+            }
+
+            //  root blocker on the return way
+            if (cur.hasParent) cur = cur.parent.get
+            else cur = null
+          }
         }
       }
     }

@@ -7,11 +7,6 @@ import com.prb.f1.dsl._
 
 class NodeTest {
 
-  @Before
-  def initialize(): Unit = {
-
-  }
-
   //  When Tree is only leaf
   @Test
   def testWithLeaf(): Unit = {

@@ -10,9 +10,41 @@ import com.prb.f1.NodeUtils._
 
 class NodeUtilsTest {
 
-  @Before
-  def initialize(): Unit = {
 
+  //  When Tree is empty
+  @Test
+  def testTreeEmpty(): Unit = {
+
+    //    val myTree = Node(Option.empty[Int])
+    //    val newTree: Node[Int] = Node.convertToParentedTree(myTree)
+    //
+    //    var expectedTreeList = new ListBuffer[Int]()
+    //
+    //    var resultList = new ListBuffer[Int]()
+    //
+    //    newTree.foreach(x => resultList += x)
+    //
+    //    assertEquals(expectedTreeList, resultList)
+  }
+
+
+  //  When Tree contains only one node
+  @Test
+  def testTreeWithOneLeaf(): Unit = {
+
+    val myTree: Leaf[Int] = Leaf(99)
+
+    val newTree: Node[Int] = Node.convertToParentedTree(myTree)
+
+    var expectedTreeList = new ListBuffer[Int]()
+
+    expectedTreeList += 99
+
+    var resultList = new ListBuffer[Int]()
+
+    newTree.foreach(x => resultList += x)
+
+    assertEquals(expectedTreeList, resultList)
   }
 
   //  When Tree contains CNode
