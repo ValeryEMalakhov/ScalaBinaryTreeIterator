@@ -15,16 +15,12 @@ class NodeUtilsTest {
   @Test
   def testTreeEmpty(): Unit = {
 
-    //    val myTree = Node(Option.empty[Int])
-    //    val newTree: Node[Int] = Node.convertToParentedTree(myTree)
-    //
-    //    var expectedTreeList = new ListBuffer[Int]()
-    //
-    //    var resultList = new ListBuffer[Int]()
-    //
-    //    newTree.foreach(x => resultList += x)
-    //
-    //    assertEquals(expectedTreeList, resultList)
+    val expectedTreeList = new ListBuffer[Int]()
+    var resultList = new ListBuffer[Int]()
+
+    None.foreach(x => resultList += x)
+
+    assertEquals(expectedTreeList, resultList)
   }
 
 
