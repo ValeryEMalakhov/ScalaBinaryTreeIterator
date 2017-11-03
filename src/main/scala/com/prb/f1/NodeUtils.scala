@@ -1,33 +1,37 @@
 package com.prb.f1
 
+import scala.annotation.tailrec
+
 object NodeUtils {
 
   implicit class NodeOps[T](node: Node[T]) {
 
     def foreach(visitor: T => Unit): Unit = {
 
-      var curNode: Node[T] = node
-      var preNode: Node[T] = null
+      visitor(node.value)
+      treeTailRec(visitor, node, null)
+    }
 
-      visitor(curNode.value)
+    @tailrec private def treeTailRec(f: T => Unit, curNode: Node[T], preNode: Node[T]): Unit = {
 
-      while (curNode != null) {
+      if (curNode != null) {
 
         if (curNode.hasLeft & (curNode.parent.contains(preNode) || preNode == null)) {
-          preNode = curNode
-          curNode = curNode.left.get
-          visitor(curNode.value)
+          f(curNode.left.get.value)
+          treeTailRec(f, curNode.left.get, curNode)
 
         } else if (curNode.hasRight & !curNode.right.contains(preNode)) {
-          preNode = curNode
-          curNode = curNode.right.get
-          visitor(curNode.value)
+          f(curNode.right.get.value)
+          treeTailRec(f, curNode.right.get, curNode)
 
         } else if (curNode.hasParent) {
-          preNode = curNode
-          curNode = curNode.parent.get
+          treeTailRec(f, curNode.parent.get, curNode)
 
-        } else curNode = null
+        } else {
+          val _curNode: Node[T] = null
+          treeTailRec(f, _curNode, _curNode)
+          //  treeTailRec(f, null, null)
+        }
       }
     }
   }
