@@ -2,8 +2,8 @@ package com.prb.f1
 
 case class Node[T](
     value: T,
-    var left: Option[Node[T]] = None,
-    var right: Option[Node[T]] = None,
+    left: Option[Node[T]] = None,
+    right: Option[Node[T]] = None,
     var parent: Option[Node[T]] = None,
     var childCount: Int = 0) {
 
@@ -20,6 +20,9 @@ case class Node[T](
 
 object Node {
 
+  /**
+    * An implicit conversion that converts a DSL Node to a Node with mutable values
+    */
   implicit def convertToParentedTree[T](node: dsl.Node[T]): Node[T] = {
     convertTree(node, None)
   }

@@ -6,31 +6,39 @@ object NodeUtils {
 
   implicit class NodeOps[T](node: Node[T]) {
 
+    /** Apply the given procedure $visitor to the option's value,
+      * if it is nonempty. Otherwise, apply the given procedure
+      * to the empty root value.
+      *
+      * @param  visitor the procedure to apply.
+      */
     def foreach(visitor: T => Unit): Unit = {
 
       visitor(node.value)
-      treeTailRec(visitor, node, null)
+      foreachTailRec(visitor, Some(node), None)
     }
 
-    @tailrec private def treeTailRec(f: T => Unit, curNode: Node[T], preNode: Node[T]): Unit = {
+    @tailrec
+    private def foreachTailRec(
+        visitor: T => Unit,
+        curNode: Option[Node[T]],
+        preNode: Option[Node[T]]): Unit = {
 
-      if (curNode != null) {
+      if (curNode.isDefined) {
 
-        if (curNode.hasLeft & (curNode.parent.contains(preNode) || preNode == null)) {
-          f(curNode.left.get.value)
-          treeTailRec(f, curNode.left.get, curNode)
+        if (curNode.get.hasLeft & (curNode.get.parent == preNode || preNode.isEmpty)) {
+          visitor(curNode.get.left.get.value)
+          foreachTailRec(visitor, curNode.get.left, curNode)
 
-        } else if (curNode.hasRight & !curNode.right.contains(preNode)) {
-          f(curNode.right.get.value)
-          treeTailRec(f, curNode.right.get, curNode)
+        } else if (curNode.get.hasRight & curNode.get.right != preNode) {
+          visitor(curNode.get.right.get.value)
+          foreachTailRec(visitor, curNode.get.right, curNode)
 
-        } else if (curNode.hasParent) {
-          treeTailRec(f, curNode.parent.get, curNode)
+        } else if (curNode.get.hasParent) {
+          foreachTailRec(visitor, curNode.get.parent, curNode)
 
         } else {
-          val _curNode: Node[T] = null
-          treeTailRec(f, _curNode, _curNode)
-          //  treeTailRec(f, null, null)
+          foreachTailRec(visitor, None, None)
         }
       }
     }

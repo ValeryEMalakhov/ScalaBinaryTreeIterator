@@ -1,5 +1,7 @@
 package com.prb
 
+import scala.collection._
+
 import com.prb.f1.Node
 import com.prb.f1.NodeUtils._
 import com.prb.f1.dsl._
@@ -51,5 +53,4 @@ object Main extends App {
 
   println(s"Printing tree node/leaf values: ")
   newTree.foreach(x => println(x))
-
 }
