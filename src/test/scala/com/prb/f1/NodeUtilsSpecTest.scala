@@ -11,7 +11,7 @@ class NodeUtilsSpecTest extends mutable.Specification {
 
   "A tree that consists of" >> {
 
-    "nothing must return nothing." >> {
+    "nothing must return nothing" >> {
       var resultList = new ListBuffer[Int]()
 
       None.foreach(x => resultList += x)
@@ -19,7 +19,7 @@ class NodeUtilsSpecTest extends mutable.Specification {
       resultList must beEmpty
     }
 
-    "only one Leaf must return only its." >> {
+    "only one Leaf must return only its" >> {
       val newTree: Node[Int] = Node.convertToParentedTree(Leaf(99))
       var resultList = new ListBuffer[Int]()
 
@@ -28,7 +28,7 @@ class NodeUtilsSpecTest extends mutable.Specification {
       resultList must_== ListBuffer[Int](99)
     }
 
-    "different nodes must return values in DFS pre-order traversal " >> {
+    "different nodes must return values in DFS pre-order traversal" >> {
       val myTree: CNode[Int] = CNode(1,
         CNode(2,
           CNode(3,
