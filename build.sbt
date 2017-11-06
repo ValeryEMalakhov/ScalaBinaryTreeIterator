@@ -1,8 +1,8 @@
 import Dependencies._
 
-name := "ScalaWorkTask2"
+name := "ScalaBinaryTreeIterator"
 
-version := "0.1.0-SNAPSHOT"
+version := "0.1.2"
 
 scalaVersion := "2.12.3"
 
