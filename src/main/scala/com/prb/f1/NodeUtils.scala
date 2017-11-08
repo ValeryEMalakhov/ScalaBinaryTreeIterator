@@ -40,7 +40,7 @@ object NodeUtils {
             cur.copy(right = None))))))
 
       } else if (curNode.flatMap(cur => cur.parent.map(p => p)).isDefined) {
-        tailRecTreeTraversal(visitor, curNode.get.parent)
+        tailRecTreeTraversal(visitor, curNode.flatMap(cur => cur.parent.map(p => p.copy())))
       }
     }
   }
