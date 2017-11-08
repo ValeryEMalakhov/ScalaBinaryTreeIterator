@@ -15,31 +15,32 @@ object NodeUtils {
     def foreach(visitor: T => Unit): Unit = {
 
       visitor(node.value)
-      foreachTailRec(visitor, Some(node), None)
+      tailRecTreeTraversal(visitor, Some(node))
     }
 
     @tailrec
-    private def foreachTailRec(
+    private def tailRecTreeTraversal(
         visitor: T => Unit,
-        curNode: Option[Node[T]],
-        preNode: Option[Node[T]]): Unit = {
+        curNode: Option[Node[T]]): Unit = {
 
-      if (curNode.isDefined) {
+      if (curNode.flatMap(cur => cur.left.map(l => l)).isDefined) {
 
-        if (curNode.get.hasLeft & (curNode.get.parent == preNode || preNode.isEmpty)) {
-          visitor(curNode.get.left.get.value)
-          foreachTailRec(visitor, curNode.get.left, curNode)
+        curNode.foreach(cur => cur.left.foreach(lVal => visitor(lVal.value)))
 
-        } else if (curNode.get.hasRight & curNode.get.right != preNode) {
-          visitor(curNode.get.right.get.value)
-          foreachTailRec(visitor, curNode.get.right, curNode)
+        tailRecTreeTraversal(visitor, curNode.flatMap(cur =>
+          cur.left.map(l => l.copy(parent = curNode.map(cur =>
+            cur.copy(left = None))))))
 
-        } else if (curNode.get.hasParent) {
-          foreachTailRec(visitor, curNode.get.parent, curNode)
+      } else if (curNode.flatMap(cur => cur.right.map(r => r)).isDefined) {
 
-        } else {
-          foreachTailRec(visitor, None, None)
-        }
+        curNode.foreach(cur => cur.right.foreach(rVal => visitor(rVal.value)))
+
+        tailRecTreeTraversal(visitor, curNode.flatMap(cur => cur.right.map(r =>
+          r.copy(parent = curNode.map(cur =>
+            cur.copy(right = None))))))
+
+      } else if (curNode.flatMap(cur => cur.parent.map(p => p)).isDefined) {
+        tailRecTreeTraversal(visitor, curNode.get.parent)
       }
     }
   }
