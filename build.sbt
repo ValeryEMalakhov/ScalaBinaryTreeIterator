@@ -9,6 +9,5 @@ scalaVersion := "2.12.3"
 scalaSource in Test := baseDirectory.value / "src" / "test" / "scala"
 
 libraryDependencies ++= Seq(
-  jUnit,
   specs2
 )

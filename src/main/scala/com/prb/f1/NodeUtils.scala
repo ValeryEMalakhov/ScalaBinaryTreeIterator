@@ -16,7 +16,7 @@ object NodeUtils {
     def foreach(visitor: T => Unit): Unit = {
 
       visitor(node.value)
-      tailRecTreeTraversalOld(visitor, Some(node))
+      recTreeTraversal(visitor, Some(node))
     }
 
     // Tree visualisation
@@ -42,56 +42,21 @@ object NodeUtils {
       curNode.flatMap(cur => cur.left).foreach { leftNode =>
 
         visitor(leftNode.value)
-        recTreeTraversal(visitor, Some(leftNode.copy(parent = None)))
+        leftNode.parent = None
+        recTreeTraversal(visitor, Some(leftNode))
       }
       // The same as for `left`, but only for` right`
       curNode.flatMap(cur => cur.right).foreach { rightNode =>
 
         visitor(rightNode.value)
-        recTreeTraversal(visitor, Some(rightNode.copy(parent = None)))
+        rightNode.parent = None
+        recTreeTraversal(visitor, Some(rightNode))
       }
       // Otherwise, try to get a parent or complete the current iteration
       curNode.flatMap(cur => cur.parent).foreach { parentNode =>
 
         recTreeTraversal(visitor, Some(parentNode))
       }
-    }
-
-    @tailrec
-    private def tailRecTreeTraversalOld(
-        visitor: T => Unit,
-        curNode: Option[Node[T]]): Unit = {
-
-      // Go down the left branch if it exists
-      if (curNode.flatMap(cur => cur.left).isDefined) {
-
-        // apply the $visitor to the `left` Node
-        curNode.foreach(cur => cur.left.foreach(lVal => visitor(lVal.value)))
-
-        // recursively call $tailRecTreeTraversalOld
-        //  with changing parent `left` Node to the None
-        tailRecTreeTraversalOld(visitor,
-          curNode.flatMap(cur => cur.left.map(l =>
-            l.copy(parent = curNode.map(cur => cur.copy(left = None))))))
-
-      } // Else go down the right branch if it exists
-      else if (curNode.flatMap(cur => cur.right).isDefined) {
-
-        // apply the $visitor to the `right` Node
-        curNode.foreach(cur => cur.right.foreach(rVal => visitor(rVal.value)))
-
-        // recursively call $tailRecTreeTraversalOld
-        //  with changing parent `right` Node to the None
-        tailRecTreeTraversalOld(visitor,
-          curNode.flatMap(cur => cur.right.map(r =>
-            r.copy(parent = curNode.map(cur => cur.copy(right = None))))))
-
-      } // Else returns to the parent
-      else if (curNode.flatMap(cur => cur.parent).isDefined) {
-        tailRecTreeTraversalOld(visitor,
-          curNode.flatMap(cur => cur.parent))
-
-      } // Otherwise, the tree traversal is completed
     }
   }
 
