@@ -16,7 +16,7 @@ object NodeUtils {
     def foreach(visitor: T => Unit): Unit = {
 
       visitor(node.value)
-      recTreeTraversal(visitor, Some(node))
+      tailRecTreeTraversal(visitor, node)
     }
 
     // Tree visualisation
@@ -29,33 +29,38 @@ object NodeUtils {
           9                           22  23
     */
 
-    // It is not tail-recursive, because the function call is not the last action
-    private def recTreeTraversal(
+    @tailrec
+    private def tailRecTreeTraversal(
         visitor: T => Unit,
-        curNode: Option[Node[T]]): Unit = {
+        curNode: Node[T]): Unit = {
 
-      /**
-        * If the current Node has the left child,
-        * apply the given procedure $visitor to the `left` Node,
-        * then recursively call $recTreeTraversal
-        * with changing `left` parent to the None */
-      curNode.flatMap(cur => cur.left).foreach { leftNode =>
+      curNode match {
+        // if empty - complete the traversal
+        case null =>
 
-        visitor(leftNode.value)
-        leftNode.parent = None
-        recTreeTraversal(visitor, Some(leftNode))
+        // if isLeaf, try to get the parent Node
+        case Node(_, None, None, parent, _) =>
+          tailRecTreeTraversal(visitor, nextNode(parent))
+
+        // if right Node exist - go right and delete this way from parent Node
+        case Node(_, None, right, _, _) =>
+          right.foreach(r => visitor(r.value))
+          right.foreach(r => r.parent = Some(Node(curNode.value, curNode.left, None, curNode.parent, curNode.childCount)))
+          tailRecTreeTraversal(visitor, nextNode(right))
+
+        // if left Node exist - go left and delete this way from parent Node
+        case Node(_, left, _, _, _) =>
+          left.foreach(l => visitor(l.value))
+          left.foreach(l => l.parent = Some(Node(curNode.value, None, curNode.right, curNode.parent, curNode.childCount)))
+          tailRecTreeTraversal(visitor, nextNode(left))
       }
-      // The same as for `left`, but only for` right`
-      curNode.flatMap(cur => cur.right).foreach { rightNode =>
+    }
 
-        visitor(rightNode.value)
-        rightNode.parent = None
-        recTreeTraversal(visitor, Some(rightNode))
-      }
-      // Otherwise, try to get a parent or complete the current iteration
-      curNode.flatMap(cur => cur.parent).foreach { parentNode =>
+    private def nextNode(curNode: Option[Node[T]]): Node[T] = {
 
-        recTreeTraversal(visitor, Some(parentNode))
+      curNode match {
+        case Some(cur) => cur
+        case None => null
       }
     }
   }
