@@ -1,7 +1,5 @@
 package com.prb
 
-import scala.collection._
-
 import com.prb.f1.Node
 import com.prb.f1.NodeUtils._
 import com.prb.f1.dsl._

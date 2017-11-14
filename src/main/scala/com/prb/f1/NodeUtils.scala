@@ -16,7 +16,7 @@ object NodeUtils {
     def foreach(visitor: T => Unit): Unit = {
 
       visitor(node.value)
-      tailRecTreeTraversal(visitor, node)
+      tailRecTreeTraversal(visitor, Some(node))
     }
 
     // Tree visualisation
@@ -32,35 +32,28 @@ object NodeUtils {
     @tailrec
     private def tailRecTreeTraversal(
         visitor: T => Unit,
-        curNode: Node[T]): Unit = {
+        curNode: Option[Node[T]]): Unit = {
 
       curNode match {
-        // if empty - complete the traversal
-        case null =>
+        case Some(cur) =>
+          cur match {
+            // if isLeaf, try to get the parent Node
+            case Node(_, None, None, parent, _) =>
+              tailRecTreeTraversal(visitor, parent)
 
-        // if isLeaf, try to get the parent Node
-        case Node(_, None, None, parent, _) =>
-          tailRecTreeTraversal(visitor, nextNode(parent))
+            // if right Node exist - go right and delete this way from parent Node
+            case Node(_, None, right, _, _) =>
+              right.foreach(r => visitor(r.value))
+              right.foreach(r => r.parent = Some(Node(cur.value, cur.left, None, cur.parent, cur.childCount)))
+              tailRecTreeTraversal(visitor, right)
 
-        // if right Node exist - go right and delete this way from parent Node
-        case Node(_, None, right, _, _) =>
-          right.foreach(r => visitor(r.value))
-          right.foreach(r => r.parent = Some(Node(curNode.value, curNode.left, None, curNode.parent, curNode.childCount)))
-          tailRecTreeTraversal(visitor, nextNode(right))
-
-        // if left Node exist - go left and delete this way from parent Node
-        case Node(_, left, _, _, _) =>
-          left.foreach(l => visitor(l.value))
-          left.foreach(l => l.parent = Some(Node(curNode.value, None, curNode.right, curNode.parent, curNode.childCount)))
-          tailRecTreeTraversal(visitor, nextNode(left))
-      }
-    }
-
-    private def nextNode(curNode: Option[Node[T]]): Node[T] = {
-
-      curNode match {
-        case Some(cur) => cur
-        case None => null
+            // if left Node exist - go left and delete this way from parent Node
+            case Node(_, left, _, _, _) =>
+              left.foreach(l => visitor(l.value))
+              left.foreach(l => l.parent = Some(Node(cur.value, None, cur.right, cur.parent, cur.childCount)))
+              tailRecTreeTraversal(visitor, left)
+          }
+        case None =>
       }
     }
   }

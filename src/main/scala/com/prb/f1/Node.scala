@@ -29,7 +29,7 @@ object Node {
 
   private def convertTree[T](node: dsl.Node[T], parent: Option[Node[T]]): Node[T] = {
     node match {
-      case dsl.CNode(a, left1, right1) => {
+      case dsl.CNode(a, left1, right1) =>
         val left = convertTree(left1, None)
         val right = convertTree(right1, None)
         val currentNode = Node(a, Some(left), Some(right), parent)
@@ -38,23 +38,23 @@ object Node {
 
         currentNode.childCount = currentNode.left.get.childCount + currentNode.right.get.childCount + 2
         currentNode
-      }
-      case dsl.LBNode(a, left1) => {
+
+      case dsl.LBNode(a, left1) =>
         val left = convertTree(left1, None)
         val currentNode = Node(a, Some(left), None, parent)
         left.parent = Some(currentNode)
 
         currentNode.childCount = currentNode.left.get.childCount + 1
         currentNode
-      }
-      case dsl.RBNode(a, right1) => {
+
+      case dsl.RBNode(a, right1) =>
         val right = convertTree(right1, None)
         val currentNode = Node(a, None, Some(right), parent)
         right.parent = Some(currentNode)
 
         currentNode.childCount = currentNode.right.get.childCount + 1
         currentNode
-      }
+      
       case dsl.Leaf(a) =>
         Node(a, None, None, parent)
     }
