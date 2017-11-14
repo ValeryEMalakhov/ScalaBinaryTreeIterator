@@ -18,17 +18,7 @@ object NodeUtils {
       visitor(node.value)
       tailRecTreeTraversal(visitor, Some(node))
     }
-
-    // Tree visualisation
-    /*
-                      /1\
-              /2\             /15\
-         /3\       11\    16\      /18\
-     /4\     /7\    /12\    17    19  20\
-    5   6  /8  10  13  14              /21\
-          9                           22  23
-    */
-
+    
     @tailrec
     private def tailRecTreeTraversal(
         visitor: T => Unit,
